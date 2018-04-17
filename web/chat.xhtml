@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">Chat</ui:define>
+        <ui:define name="conteudo">
+
+            <h:form id="formListagem">
+                <b:dataTable 
+                    value="#{controllerChat.beanChat.listUsers}"
+                    info="false"
+                    searching="false"
+                    var="obj" paginated="false">
+                    <f:facet name="header"> 
+                        <h:outputLabel>Usuários</h:outputLabel>
+                    </f:facet> 
+                    <b:dataTableColumn>
+                        <p:outputLabel value="#{obj.name}" />
+                    </b:dataTableColumn>
+                </b:dataTable>
+                    <p:poll listener="#{controllerChat.updateListUsers()}" 
+                                update="formListagem"/>
+                <p:column>
+                    <br/>
+                    <p:outputLabel>Usuários online: </p:outputLabel>
+                    <span> </span>
+                    <p:outputLabel value="#{controllerChat.beanChat.listUsers.size().toString()}" />
+                </p:column>
+
+                    <c:if test="#{!Strings.isNull(controllerChat.user.name)}">
+                    <h:form id="formInserir">
+                        <br/><br/>
+                        <p:outputLabel value="Usuário"/>
+                        <b:inputText placeholder="Nome de Usuário" value="#{controllerChat.user.name}" />
+                        <b:commandButton icon="ui-icon-pencil" 
+                                         actionListener="#{controllerChat.loginChat()}"
+                                         value="Logar"
+                                         update=":formListagem"/>
+                    </h:form>
+                </c:if>
+
+                <c:if test="#{Strings.isNull(controllerChat.user.name)}">
+                    <br/><br/>
+                    <h:panelGroup>
+                        <b:dataTable
+                            value="#{controllerChat.beanChat.listMessages}"
+                            info="false"
+                            responsive="true"
+                            id="dataTableConversa"
+                            searching="false"
+                            var="obj" paginated="false">
+                            <b:dataTableColumn value="#{obj.message}" 
+                                               orderable="false"/>
+                        </b:dataTable>                        
+                        
+                            <b:inputText id="txtMensagem" placeholder="Mensagem" value="#{controllerChat.message.message}" />
+                            <p:column>
+                                <b:commandButton class="btn btn-default"
+                                                 actionListener="#{controllerChat.addMessage()}"
+                                                 value="Enviar"
+                                                 update="formListagem" />
+
+                                <b:commandButton class="btn btn-danger"
+                                                 icon="ui-icon-pencil" 
+                                                 actionListener="#{controllerChat.logoutChat()}"
+                                                 value="Sair"
+                                                 update="formListagem" />
+                            </p:column>
+                    </h:panelGroup>
+                    <p:poll listener="#{controllerChat.updateListMessages()}" 
+                                update="dataTableConversa"/>
+                </c:if>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
