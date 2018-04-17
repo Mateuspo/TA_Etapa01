@@ -33,7 +33,13 @@ public class ControllerChat implements Serializable {
     }
 
     public String returnChat() {
+        loginChat();
         return "/chat";
+    }
+    
+    public String exitChat(){
+        logoutChat();
+        return "/index";
     }
 
     public void addMessage() {
@@ -74,14 +80,11 @@ public class ControllerChat implements Serializable {
     }
 
     public void logoutChat() {
-        this.beanChat.addUser(user);
         this.beanChat.addMessage(
                 new Message(beanChat.nextUserId(),
-                        user.getName() + " saiu na sala"));
+                        user.getName() + " saiu da sala"));
 
         this.beanChat.removeUser(user);
-        this.beanChat.removeUser(user);
-
         this.user = new User();
     }
 
